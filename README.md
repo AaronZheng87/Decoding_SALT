@@ -2,6 +2,8 @@
 
 ## This is the Repo of Project Decoding Same-Different Judgement across Stimuli Presentation and Valence within Observers
 
+## The logistics regression
+
 ### The cross condition(stimuli presentation) result
 
 - The roc_auc score result of cross stimuli presentation within subjects in experiment 1
