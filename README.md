@@ -7,9 +7,9 @@ Source: https://machine-learning.paperspace.com/wiki/logistic-regression
 
 ## Random forest
 
-![random forest](https://www.tibco.com/sites/tibco/files/media_entity/2021-05/random-forest-diagram.svg)
+![random forest](https://1394217531-files.gitbook.io/~/files/v0/b/gitbook-legacy-files/o/assets%2F-LvBP1svpACTB1R1x_U4%2F-LwB40Jf1mcyqLP27qb3%2F-LwB8NgwITY4LMRiQ0Sp%2Fimage.png?alt=media&token=0421c8c6-04d6-4524-bd2d-f0bb4fe76ade)
 
-Source: https://www.tibco.com/reference-center/what-is-a-random-forest
+Source: https://machine-learning.paperspace.com/wiki/random-forest
 
 ## Result
 
