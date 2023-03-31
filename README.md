@@ -40,7 +40,7 @@ Source: https://machine-learning.paperspace.com/wiki/random-forest
 
   ![Cross condition cross experiment lr](https://github.com/AaronZheng87/Decoding_SALT/blob/main/barplot_cro_exp.png)
   
-- The roc_auc score result of logistic regression: cross stimuli presentation cross experiment within subjects with 7 trials back features
+- The roc_auc score result of logistic regression: cross stimuli presentation cross experiment within subjects using 7 trials back features
 
   ![Cross condition cross experiment lr 7 trials back](https://github.com/AaronZheng87/Decoding_SALT/blob/main/barplot_cro_exp_tb.png)
   
