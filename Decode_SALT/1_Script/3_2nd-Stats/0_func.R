@@ -27,7 +27,7 @@ roc_violin_cross <- function(df){
     ylab("ROC AUC") +
     xlab("Training data") +
     scale_fill_discrete(name = "Testing data") +
-    ggtitle("Decoding within domain") +
+    ggtitle("Decoding cross domain") +
     theme_apa()
 }
 
@@ -42,8 +42,8 @@ fi_within_current <- function(df){
       show.legend = F
     ) +
     facet_wrap(~source) +
-    ylab("Feature") +
-    xlab("Feature importance") +
+    ylab("Feature importance") +
+    xlab("Feature") +
     ggtitle("Decoding within domain") +
     theme_apa()
 }
@@ -61,8 +61,8 @@ fi_cross_current <- function(df){
       show.legend = F
     ) +
     facet_wrap(~direct) +
-    ylab("Feature") +
-    xlab("Feature importance") +
+    ylab("Feature importance") +
+    xlab("Feature") +
     ggtitle("Decoding cross domain") +
     theme_apa()
 }
@@ -83,8 +83,8 @@ fi_within_tb <- function(df){
       show.legend = F
     ) +
     facet_wrap(vars(Trial_back)) +
-    ylab("Feature") +
-    xlab("Feature importance") +
+    ylab("Feature importance") +
+    xlab("Feature") +
     ggtitle("Decoding within domain") +
     theme_apa() +
     theme(axis.text.x = element_text(angle = 90))
@@ -105,8 +105,8 @@ fi_cross_tb <- function(df){
       show.legend = F
     ) +
     facet_wrap(vars(direct, Trial_back)) +
-    ylab("Feature") +
-    xlab("Feature importance") +
+    ylab("Feature importance") +
+    xlab("Feature") +
     ggtitle("Decoding cross domain") +
     theme_apa() +
     theme(axis.text.x = element_text(angle = 90))
