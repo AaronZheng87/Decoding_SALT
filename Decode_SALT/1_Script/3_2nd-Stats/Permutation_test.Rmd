@@ -1,0 +1,89 @@
+---
+title: "Analysis"
+author: "郑元瑞"
+date: "`r Sys.Date()`"
+output: html_document
+---
+# Permutation test
+## import data and packages
+```{r}
+library(tidyverse)
+library(here)
+installed.packages()[names(sessionInfo()$otherPkgs), "Version"]
+version
+options(mc.cores = parallel::detectCores())
+options(scipen = 9)
+here::here()
+```
+```{r}
+dummy_wc <- read_csv(paste(here("3_Result", "1_Logistic", "1_Current"), "Dummy_within_current.csv", sep = "/"))
+
+dummy_cc <- read_csv(paste(here("3_Result", "1_Logistic", "1_Current"), "Dummy_cross_current.csv", sep = "/"))
+true_w_lr <- read_csv(paste(here("3_Result", "1_Logistic", "1_Current"), "LR_withinscore_current.csv", sep = "/"))
+true_c_lr <- read_csv(paste(here("3_Result", "1_Logistic", "1_Current"), "LR_crossscore_current.csv", sep = "/"))
+```
+To calculate the p value of permutation test, we well use (C + 1) / (n_permutations + 1)
+
+https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.permutation_test_score.html#sklearn.model_selection.permutation_test_score
+
+### the grand mean of within domain score
+```{r}
+true_w_no <- true_w_lr %>%
+  filter(source == "No_Ref" & target == "No_Ref") %>%
+  summarise(m = mean(score)) %>%
+  pull(m)
+
+true_w_self <- true_w_lr %>%
+  filter(source == "Self_Ref" & target == "Self_Ref") %>%
+  summarise(m = mean(score)) %>%
+  pull(m)
+
+true_c_s2n <- true_c_lr %>%
+  filter(source == "Self_Ref" & target == "No_Ref") %>%
+  summarise(m = mean(score)) %>%
+  pull()
+
+true_c_n2s <- true_c_lr %>%
+  filter(source == "No_Ref" & target == "Self_Ref") %>%
+  summarise(m = mean(score)) %>%
+  pull()
+```
+
+
+## Current trials
+### within domain permutation test 
+#### Source:No_Ref
+```{r}
+C_w_no_c <- dummy_wc %>%
+  filter(source == "No_Ref" & target == "No_Ref") %>%
+  mutate(C = if_else(score >= true_w_no, 1, 0)) %>%
+  summarise(total_c = sum(C)) %>%
+  pull(total_c)
+
+C_w_self_c <- dummy_wc %>%
+  filter(source == "Self_Ref" & target == "Self_Ref") %>%
+  mutate(C = if_else(score >= true_w_self, 1, 0)) %>%
+  summarise(total_c = sum(C)) %>%
+  pull(total_c)
+
+C_c_no2self_c <- dummy_cc %>%
+  filter(source == "No_Ref" & target == "Self_Ref") %>%
+  mutate(C = if_else(score >= true_c_n2s, 1, 0)) %>%
+  summarise(total_c = sum(C)) %>%
+  pull(total_c)
+
+
+C_c_self2no_c <- dummy_cc %>%
+  filter(source == "Self_Ref" & target == "No_Ref") %>%
+  mutate(C = if_else(score >= true_c_s2n, 1, 0)) %>%
+  summarise(total_c = sum(C)) %>%
+  pull(total_c)
+```
+we applied analysis to the data 8 times(4 for current trials, 4 for trials back), so we need to multiple 8 for bonferroni correction
+
+```{r}
+(pval_w_noc <- (C_w_no_c + 1) / (10000 + 1) * 8)
+(pval_w_selfc <- (C_w_self_c + 1) / (10000 + 1) * 8)
+(pval_c_no2self <- (C_c_no2self_c + 1) / (10000 + 1) * 8)
+(pval_c_self2no <- (C_c_self2no_c + 1) / (10000 + 1) * 8)
+```
