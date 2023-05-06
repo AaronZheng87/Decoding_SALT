@@ -15,6 +15,7 @@ options(mc.cores = parallel::detectCores())
 options(scipen = 9)
 here::here()
 ```
+
 ```{r}
 dummy_wc <- read_csv(paste(here("3_Result", "1_Logistic", "1_Current"), "Dummy_within_current.csv", sep = "/"))
 
@@ -22,6 +23,17 @@ dummy_cc <- read_csv(paste(here("3_Result", "1_Logistic", "1_Current"), "Dummy_c
 true_w_lr <- read_csv(paste(here("3_Result", "1_Logistic", "1_Current"), "LR_withinscore_current.csv", sep = "/"))
 true_c_lr <- read_csv(paste(here("3_Result", "1_Logistic", "1_Current"), "LR_crossscore_current.csv", sep = "/"))
 ```
+
+```{r}
+dummy_wtb <- read_csv(paste(here("3_Result", "1_Logistic", "2_Trials-Back"), "Dummy_within_tb.csv", sep = "/"))
+
+dummy_ctb <- read_csv(paste(here("3_Result", "1_Logistic", "2_Trials-Back"), "Dummy_cross_tb.csv", sep = "/"))
+
+true_w_lr_tb <- read_csv(paste(here("3_Result", "1_Logistic", "2_Trials-Back"), "LR_withinscore.csv", sep = "/"))
+
+true_c_lr_tb <- read_csv(paste(here("3_Result", "1_Logistic", "2_Trials-Back"), "LR_crossscore.csv", sep = "/"))
+```
+
 To calculate the p value of permutation test, we well use (C + 1) / (n_permutations + 1)
 
 https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.permutation_test_score.html#sklearn.model_selection.permutation_test_score
@@ -49,6 +61,27 @@ true_c_n2s <- true_c_lr %>%
   pull()
 ```
 
+```{r}
+true_w_no_tb <- true_w_lr_tb %>%
+  filter(source == "No_Ref" & target == "No_Ref") %>%
+  summarise(m = mean(score)) %>%
+  pull(m)
+
+true_w_self_tb <- true_w_lr_tb %>%
+  filter(source == "Self_Ref" & target == "Self_Ref") %>%
+  summarise(m = mean(score)) %>%
+  pull(m)
+
+true_c_s2n_tb <- true_c_lr_tb %>%
+  filter(source == "Self_Ref" & target == "No_Ref") %>%
+  summarise(m = mean(score)) %>%
+  pull()
+
+true_c_n2s_tb <- true_c_lr_tb %>%
+  filter(source == "No_Ref" & target == "Self_Ref") %>%
+  summarise(m = mean(score)) %>%
+  pull()
+```
 
 ## Current trials
 ### within domain permutation test 
@@ -86,4 +119,43 @@ we applied analysis to the data 8 times(4 for current trials, 4 for trials back)
 (pval_w_selfc <- (C_w_self_c + 1) / (10000 + 1) * 8)
 (pval_c_no2self <- (C_c_no2self_c + 1) / (10000 + 1) * 8)
 (pval_c_self2no <- (C_c_self2no_c + 1) / (10000 + 1) * 8)
+```
+
+## Trials back
+### within domain permutation test 
+#### Source:No_Ref
+#### Source:No_Ref
+```{r}
+C_w_no_tb <- dummy_wtb %>%
+  filter(source == "No_Ref" & target == "No_Ref") %>%
+  mutate(C = if_else(score >= true_w_no_tb, 1, 0)) %>%
+  summarise(total_c = sum(C)) %>%
+  pull(total_c)
+
+C_w_self_tb <- dummy_wtb %>%
+  filter(source == "Self_Ref" & target == "Self_Ref") %>%
+  mutate(C = if_else(score >= true_w_self_tb, 1, 0)) %>%
+  summarise(total_c = sum(C)) %>%
+  pull(total_c)
+
+C_c_no2self_tb <- dummy_ctb %>%
+  filter(source == "No_Ref" & target == "Self_Ref") %>%
+  mutate(C = if_else(score >= true_c_n2s_tb, 1, 0)) %>%
+  summarise(total_c = sum(C)) %>%
+  pull(total_c)
+
+
+C_c_self2no_tb <- dummy_ctb %>%
+  filter(source == "Self_Ref" & target == "No_Ref") %>%
+  mutate(C = if_else(score >= true_c_s2n_tb, 1, 0)) %>%
+  summarise(total_c = sum(C)) %>%
+  pull(total_c)
+```
+we applied analysis to the data 8 times(4 for current trials, 4 for trials back), so we need to multiple 8 for bonferroni correction
+
+```{r}
+(pval_w_no_tb <- (C_w_no_tb + 1) / (10000 + 1) * 8)
+(pval_w_self_tb <- (C_w_self_tb + 1) / (10000 + 1) * 8)
+(pval_c_no2self_tb <- (C_c_no2self_tb + 1) / (10000 + 1) * 8)
+(pval_c_self2no_tb <- (C_c_self2no_tb + 1) / (10000 + 1) * 8)
 ```
